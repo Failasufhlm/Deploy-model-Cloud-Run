@@ -1,23 +1,20 @@
-FROM python:3.9-slim
-
-# Install dependencies
-RUN apt-get update && apt-get install -y libgomp1
+# Gunakan image Python sebagai base
+FROM python:3.8-slim
 
 # Set working directory
 WORKDIR /app
 
-# Copy necessary files
-COPY requirements.txt /app/requirements.txt
-COPY app.py /app/app.py
+# Salin file requirements.txt ke dalam container
+COPY requirements.txt .
 
-# Pastikan model di path ini
-COPY model /app/model  
-
-# Install Python packages
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port for Cloud Run
-EXPOSE 8080
+# Salin semua file ke dalam container
+COPY . .
 
-# Command to run the application
+# Expose port yang digunakan oleh Flask
+EXPOSE 5000
+
+# Jalankan aplikasi Flask
 CMD ["python", "app.py"]
