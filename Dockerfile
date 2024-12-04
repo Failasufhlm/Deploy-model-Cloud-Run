@@ -1,17 +1,25 @@
-# Gunakan image Python sebagai base
-FROM python:3.8-slim
+# Use Python base image
+FROM python:3.10-slim
 
-# Set working directory
+# Set environment variables for Python optimization
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Set working directory inside the container
 WORKDIR /app
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy requirements.txt and install dependencies
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# Salin semua file ke dalam container
-COPY . .
+# Copy the entire application code into the container
+COPY . /app
 
-# Expose port yang digunakan oleh Flask
-EXPOSE 5000
+# Pull LFS files if necessary
+# RUN git lfs pull
 
-# Jalankan aplikasi Flask
-CMD ["python", "app.py"]
+# Expose port 8080 (default for Cloud Run)
+EXPOSE 8080
+
+# Default command to run the application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
